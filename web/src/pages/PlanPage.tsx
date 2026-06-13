@@ -98,7 +98,7 @@ export default function PlanPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-btn bg-alan-indigo">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="text-lg font-bold text-alan-text-primary">Arwen</span>
+          <span className="text-lg font-bold text-alan-text-primary">CuraPath</span>
           <span className="ml-auto text-sm text-alan-text-muted">
             {plan.actions.length} actions • Pierre Muller
           </span>

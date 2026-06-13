@@ -1,6 +1,6 @@
-# Arwen Medical Parser
+# CuraPath Medical Parser
 
-Arwen is a medical document parsing and extraction system built with Python, FastAPI, and Mistral AI, accompanied by a modern React frontend.
+CuraPath is a medical document parsing and extraction system built with Python, FastAPI, and Mistral AI, accompanied by a modern React frontend.
 
 ## Project Structure
 
