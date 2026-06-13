@@ -200,10 +200,40 @@ export async function getPatientCard(): Promise<PatientCard> {
 export async function getMedications(): Promise<MedicationsResponse> {
   if (USE_MOCKS) {
     await delay(200);
-    return {
-      schedules: [],
-      adherence_score: 100,
-    };
+    const store = localStorage.getItem("arwen_mock_medications");
+    let schedules = store ? JSON.parse(store) : [
+      {
+        id: "sched-1",
+        medication_name: "Amoxicillin",
+        dosage: "1g",
+        frequency: "twice a day",
+        instructions: "Take with food",
+        doses: [
+          { id: "dose-1a", scheduled_time: new Date().toISOString(), status: "PENDING" },
+          { id: "dose-1b", scheduled_time: new Date(Date.now() + 12*3600000).toISOString(), status: "PENDING" }
+        ]
+      },
+      {
+        id: "sched-2",
+        medication_name: "Lithium (Téralithe 400)",
+        dosage: "400mg",
+        frequency: "once a day",
+        instructions: "Existing treatment - evening",
+        doses: [
+          { id: "dose-2a", scheduled_time: new Date().toISOString(), status: "PENDING" }
+        ]
+      }
+    ];
+
+    if (!store) {
+      localStorage.setItem("arwen_mock_medications", JSON.stringify(schedules));
+    }
+
+    const totalDoses = schedules.reduce((acc: number, s: any) => acc + s.doses.length, 0);
+    const takenDoses = schedules.reduce((acc: number, s: any) => acc + s.doses.filter((d: any) => d.status === "TAKEN").length, 0);
+    const adherence_score = totalDoses > 0 ? Math.round((takenDoses / totalDoses) * 100) : 100;
+
+    return { schedules, adherence_score };
   }
   const response = await fetch(buildUrl("/api/patient/medications"), { headers: getAuthHeaders() });
   if (!response.ok) throw new Error("Failed to fetch medications");
@@ -211,13 +241,43 @@ export async function getMedications(): Promise<MedicationsResponse> {
 }
 
 export async function markDoseTaken(scheduleId: string, doseId: string): Promise<void> {
-  if (USE_MOCKS) { await delay(200); return; }
+  if (USE_MOCKS) {
+    await delay(200);
+    const store = localStorage.getItem("arwen_mock_medications");
+    if (store) {
+      const schedules = JSON.parse(store);
+      const sched = schedules.find((s: any) => s.id === scheduleId);
+      if (sched) {
+        const dose = sched.doses.find((d: any) => d.id === doseId);
+        if (dose) {
+          dose.status = "TAKEN";
+          localStorage.setItem("arwen_mock_medications", JSON.stringify(schedules));
+        }
+      }
+    }
+    return;
+  }
   const response = await fetch(buildUrl(`/api/patient/medications/${scheduleId}/doses/${doseId}/mark-taken`), { method: "POST", headers: getAuthHeaders() });
   if (!response.ok) throw new Error("Failed to mark dose taken");
 }
 
 export async function skipDose(scheduleId: string, doseId: string): Promise<void> {
-  if (USE_MOCKS) { await delay(200); return; }
+  if (USE_MOCKS) {
+    await delay(200);
+    const store = localStorage.getItem("arwen_mock_medications");
+    if (store) {
+      const schedules = JSON.parse(store);
+      const sched = schedules.find((s: any) => s.id === scheduleId);
+      if (sched) {
+        const dose = sched.doses.find((d: any) => d.id === doseId);
+        if (dose) {
+          dose.status = "SKIPPED";
+          localStorage.setItem("arwen_mock_medications", JSON.stringify(schedules));
+        }
+      }
+    }
+    return;
+  }
   const response = await fetch(buildUrl(`/api/patient/medications/${scheduleId}/doses/${doseId}/skip`), { method: "POST", headers: getAuthHeaders() });
   if (!response.ok) throw new Error("Failed to skip dose");
 }
@@ -225,7 +285,17 @@ export async function skipDose(scheduleId: string, doseId: string): Promise<void
 export async function getTimeline(): Promise<TimelineDay[]> {
   if (USE_MOCKS) {
     await delay(200);
-    return [];
+    return [
+      {
+        label: "Today",
+        date: new Date().toISOString().split('T')[0],
+        items: [
+          { id: "t1", date: new Date().toISOString().split('T')[0], type: "medication", title: "Take Amoxicillin 1g", description: "Twice daily with food. Crucial to prevent post-op infection.", status: "pending" },
+          { id: "t2", date: new Date().toISOString().split('T')[0], type: "follow_up", title: "Rest and Hydrate", description: "Drink at least 2.5L of water daily to flush fragments.", status: "pending" },
+          { id: "app-1", date: new Date().toISOString().split('T')[0], type: "appointment", title: "Pre-op Consultation", description: "With Dr. Laurent Muller at CHU Nîmes", status: "pending" }
+        ]
+      }
+    ];
   }
   const response = await fetch(buildUrl("/api/patient/timeline"), { headers: getAuthHeaders() });
   if (!response.ok) throw new Error("Failed to fetch timeline");
@@ -270,4 +340,127 @@ export async function getCoachSummary(context: CoachContext): Promise<CoachSumma
   }
 
   return response.json() as Promise<CoachSummary>;
+}
+
+// ─── Reminders ───────────────────────────────────────────────────────────────
+
+export interface Reminder {
+  id: string;
+  medication: string;
+  dosage?: string;
+  frequency?: string;
+  reminder_times: string[];
+}
+
+export interface CreateReminderRequest {
+  medication: string;
+  dosage?: string;
+  frequency?: string;
+  reminder_times: string[];
+}
+
+export async function getReminders(): Promise<Reminder[]> {
+  if (USE_MOCKS) {
+    const list = localStorage.getItem("arwen_mock_reminders");
+    return list ? JSON.parse(list) : [
+      { id: "rem-1", medication: "Amoxicillin", dosage: "1g", frequency: "twice a day", reminder_times: ["08:00", "20:00"] },
+      { id: "rem-2", medication: "Lithium (Téralithe 400)", dosage: "400mg", frequency: "once a day", reminder_times: ["21:00"] }
+    ];
+  }
+  const response = await fetch(buildUrl("/api/reminders"), { headers: getAuthHeaders() });
+  if (!response.ok) throw new Error("Failed to fetch reminders");
+  return response.json() as Promise<Reminder[]>;
+}
+
+export async function createReminder(data: CreateReminderRequest): Promise<void> {
+  if (USE_MOCKS) {
+    await delay(200);
+    const listStr = localStorage.getItem("arwen_mock_reminders");
+    const list: Reminder[] = listStr ? JSON.parse(listStr) : [
+      { id: "rem-1", medication: "Amoxicillin", dosage: "1g", frequency: "twice a day", reminder_times: ["08:00", "20:00"] },
+      { id: "rem-2", medication: "Lithium (Téralithe 400)", dosage: "400mg", frequency: "once a day", reminder_times: ["21:00"] }
+    ];
+    const newRem: Reminder = {
+      id: "rem-" + Math.random().toString(36).substring(2, 9),
+      medication: data.medication,
+      dosage: data.dosage,
+      frequency: data.frequency,
+      reminder_times: data.reminder_times
+    };
+    list.push(newRem);
+    localStorage.setItem("arwen_mock_reminders", JSON.stringify(list));
+    return;
+  }
+  const response = await fetch(buildUrl("/api/reminders/create"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Failed to create reminder");
+}
+
+// ─── Appointments ─────────────────────────────────────────────────────────────
+
+export interface Appointment {
+  id: string;
+  title: string;
+  doctor_name?: string;
+  date: string;
+  description?: string;
+}
+
+export async function getAppointments(): Promise<Appointment[]> {
+  if (USE_MOCKS) {
+    return [
+      { id: "app-1", title: "Pre-op Consultation", doctor_name: "Dr. Laurent Muller", date: "2026-04-17T10:00:00Z", description: "Bring latest lab reports" },
+      { id: "app-2", title: "Ureteroscopy Procedure", doctor_name: "Dr. Laurent Muller", date: "2026-04-24T08:00:00Z", description: "Fasting required from midnight" }
+    ];
+  }
+  const response = await fetch(buildUrl("/api/appointments"), { headers: getAuthHeaders() });
+  if (!response.ok) throw new Error("Failed to fetch appointments");
+  return response.json() as Promise<Appointment[]>;
+}
+
+// ─── AI Coach Chat ────────────────────────────────────────────────────────────
+
+export interface ChatHistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export async function sendChatMessage(
+  history: ChatHistoryMessage[],
+  query: string
+): Promise<string> {
+  if (USE_MOCKS) {
+    await delay(1200);
+    return "Based on your medical profile, I recommend following your prescription as directed. Make sure to take your medications with food and stay well hydrated. Let me know if you have any specific concerns!";
+  }
+  const response = await fetch(buildUrl("/api/chat"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify({ history, query }),
+  });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`POST /api/chat failed: ${response.status} — ${text}`);
+  }
+  const data = await response.json() as { reply: string };
+  return data.reply;
+}
+
+// ─── Profile ──────────────────────────────────────────────────────────────────
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  patient_id?: string;
+}
+
+export async function getProfile(): Promise<UserProfile> {
+  const response = await fetch(buildUrl("/api/patient/profile"), { headers: getAuthHeaders() });
+  if (!response.ok) throw new Error("Failed to fetch profile");
+  return response.json() as Promise<UserProfile>;
 }

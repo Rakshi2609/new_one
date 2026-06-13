@@ -1,7 +1,5 @@
 import { AuthResponse, User } from "@/types/models";
 
-const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === "true";
-
 export async function login(email: string, password: string): Promise<AuthResponse> {
   const response = await fetch("/api/auth/login", {
     method: "POST",

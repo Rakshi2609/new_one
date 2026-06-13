@@ -34,7 +34,7 @@ export default function SignupPage() {
       <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-neutral-800 rounded-2xl shadow-xl border border-neutral-100 dark:border-neutral-700">
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">Create an account</h1>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">Join Arwen to manage your recovery</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">Join CuraPath to manage your recovery</p>
         </div>
         {error && <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-lg">{error}</div>}
         <form onSubmit={handleSignup} className="space-y-4">

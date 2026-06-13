@@ -14,7 +14,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import type { PatientCard, MedicationSchedule, TimelineDay } from "@/types/models";
 
 export default function DashboardPage() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [card, setCard] = useState<PatientCard | null>(null);
   const [schedules, setSchedules] = useState<MedicationSchedule[]>([]);
   const [adherenceScore, setAdherenceScore] = useState<number>(0);
