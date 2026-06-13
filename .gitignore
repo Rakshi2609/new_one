@@ -1,0 +1,12 @@
+.vscode/
+.env
+__pycache__/
+*.pyc
+.venv/
+dist/
+*.egg-info/
+img/
+.fuse_hidden*
+.DS_Store
+vault/
+web/node_modules/

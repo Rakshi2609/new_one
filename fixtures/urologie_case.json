@@ -1,0 +1,69 @@
+{
+  "documents": [
+    {
+      "document_type": "operation_report",
+      "patient_name": "Marie Dupont",
+      "doctor_name": "Dr. Petit",
+      "doctor_id": null,
+      "date": "2026-04-08",
+      "medications": [],
+      "procedure": "Ureteroscopy scheduled for 2026-04-20",
+      "diagnosis": "Kidney stones (right side)",
+      "operative_findings": null,
+      "post_op_instructions": [
+        "No heavy lifting for 48 hours after the procedure",
+        "Strict rest for 48 hours",
+        "Urine culture (ECBU) required 7 days before the procedure",
+        "Urea and creatinine blood test required 7 days before the procedure",
+        "Mention current lithium treatment to the urologist"
+      ],
+      "follow_up": "Control appointment 15 days after the procedure",
+      "notes": "Patient on long-term lithium therapy, psychiatric follow-up ongoing."
+    },
+    {
+      "document_type": "prescription",
+      "patient_name": "Marie Dupont",
+      "doctor_name": "Dr. Petit",
+      "doctor_id": null,
+      "date": "2026-04-08",
+      "medications": [
+        {
+          "name": "Paracetamol",
+          "dosage": "1g",
+          "frequency": "up to 3 times a day",
+          "duration": "as needed post-op",
+          "route": "oral",
+          "instructions": "Do not exceed 3g per day"
+        },
+        {
+          "name": "Lithium",
+          "dosage": "400mg",
+          "frequency": "once a day",
+          "duration": "ongoing",
+          "route": "oral",
+          "instructions": "Existing treatment, do not stop without psychiatrist approval"
+        }
+      ],
+      "procedure": null,
+      "diagnosis": null,
+      "operative_findings": null,
+      "post_op_instructions": [],
+      "follow_up": null,
+      "notes": null
+    }
+  ],
+  "clinical_note": {
+    "patient_name": "Marie Dupont",
+    "practitioner": "Dr. Petit",
+    "date": "2026-04-08",
+    "chief_complaint": "Kidney stones requiring ureteroscopy",
+    "observations": "Patient on lithium since 2019, psychiatric follow-up ongoing. Lives alone on the 5th floor without an elevator at 25 rue Tolbiac, Paris 13.",
+    "action_items": [
+      "Book ECBU before 2026-04-13",
+      "Book urea and creatinine blood test before 2026-04-13",
+      "Arrange transport home after the procedure",
+      "Mention lithium to the urologist before the procedure"
+    ],
+    "follow_up": "Ureteroscopy on 2026-04-20 with Dr. Petit at Tenon Hospital"
+  }
+}
