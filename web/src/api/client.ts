@@ -13,6 +13,7 @@ import type {
   ValidatedAction,
   CoachContext,
   CoachSummary,
+  PatientHistory,
 } from "@/types/models";
 import { mockUploadResponse, mockActionPlan, mockDocuments, mockClinicalNote } from "@/fixtures/urology_case";
 
@@ -25,7 +26,18 @@ function getAuthHeaders(): Record<string, string> {
 
 function buildUrl(path: string): string {
   const patientId = localStorage.getItem("active_patient_id");
-  if (patientId) {
+  const token = localStorage.getItem("token");
+  let isDoctor = false;
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.role === "DOCTOR") {
+        isDoctor = true;
+      }
+    } catch (e) {}
+  }
+
+  if (isDoctor && patientId) {
     const sep = path.includes("?") ? "&" : "?";
     return `${path}${sep}patient_id=${encodeURIComponent(patientId)}`;
   }
@@ -197,10 +209,32 @@ export async function getPatientCard(): Promise<PatientCard> {
   return response.json() as Promise<PatientCard>;
 }
 
+export async function getPatientHistory(): Promise<PatientHistory> {
+  if (USE_MOCKS) {
+    await delay(200);
+    return {
+      patient_id: "mock",
+      patient_card: await getPatientCard(),
+      consultations: [],
+      action_plans: [],
+      timeline: [],
+      medication_schedules: [],
+      notifications: [],
+    };
+  }
+
+  const response = await fetch(buildUrl("/api/patient/history"), { headers: getAuthHeaders() });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`GET /api/patient/history failed: ${response.status} — ${text}`);
+  }
+  return response.json() as Promise<PatientHistory>;
+}
+
 export async function getMedications(): Promise<MedicationsResponse> {
   if (USE_MOCKS) {
     await delay(200);
-    const store = localStorage.getItem("arwen_mock_medications");
+    const store = localStorage.getItem("curapath_mock_medications");
     let schedules = store ? JSON.parse(store) : [
       {
         id: "sched-1",
@@ -226,7 +260,7 @@ export async function getMedications(): Promise<MedicationsResponse> {
     ];
 
     if (!store) {
-      localStorage.setItem("arwen_mock_medications", JSON.stringify(schedules));
+      localStorage.setItem("curapath_mock_medications", JSON.stringify(schedules));
     }
 
     const totalDoses = schedules.reduce((acc: number, s: any) => acc + s.doses.length, 0);
@@ -243,7 +277,7 @@ export async function getMedications(): Promise<MedicationsResponse> {
 export async function markDoseTaken(scheduleId: string, doseId: string): Promise<void> {
   if (USE_MOCKS) {
     await delay(200);
-    const store = localStorage.getItem("arwen_mock_medications");
+    const store = localStorage.getItem("curapath_mock_medications");
     if (store) {
       const schedules = JSON.parse(store);
       const sched = schedules.find((s: any) => s.id === scheduleId);
@@ -251,7 +285,7 @@ export async function markDoseTaken(scheduleId: string, doseId: string): Promise
         const dose = sched.doses.find((d: any) => d.id === doseId);
         if (dose) {
           dose.status = "TAKEN";
-          localStorage.setItem("arwen_mock_medications", JSON.stringify(schedules));
+          localStorage.setItem("curapath_mock_medications", JSON.stringify(schedules));
         }
       }
     }
@@ -264,7 +298,7 @@ export async function markDoseTaken(scheduleId: string, doseId: string): Promise
 export async function skipDose(scheduleId: string, doseId: string): Promise<void> {
   if (USE_MOCKS) {
     await delay(200);
-    const store = localStorage.getItem("arwen_mock_medications");
+    const store = localStorage.getItem("curapath_mock_medications");
     if (store) {
       const schedules = JSON.parse(store);
       const sched = schedules.find((s: any) => s.id === scheduleId);
@@ -272,7 +306,7 @@ export async function skipDose(scheduleId: string, doseId: string): Promise<void
         const dose = sched.doses.find((d: any) => d.id === doseId);
         if (dose) {
           dose.status = "SKIPPED";
-          localStorage.setItem("arwen_mock_medications", JSON.stringify(schedules));
+          localStorage.setItem("curapath_mock_medications", JSON.stringify(schedules));
         }
       }
     }
@@ -361,7 +395,7 @@ export interface CreateReminderRequest {
 
 export async function getReminders(): Promise<Reminder[]> {
   if (USE_MOCKS) {
-    const list = localStorage.getItem("arwen_mock_reminders");
+    const list = localStorage.getItem("curapath_mock_reminders");
     return list ? JSON.parse(list) : [
       { id: "rem-1", medication: "Amoxicillin", dosage: "1g", frequency: "twice a day", reminder_times: ["08:00", "20:00"] },
       { id: "rem-2", medication: "Lithium (Téralithe 400)", dosage: "400mg", frequency: "once a day", reminder_times: ["21:00"] }
@@ -375,7 +409,7 @@ export async function getReminders(): Promise<Reminder[]> {
 export async function createReminder(data: CreateReminderRequest): Promise<void> {
   if (USE_MOCKS) {
     await delay(200);
-    const listStr = localStorage.getItem("arwen_mock_reminders");
+    const listStr = localStorage.getItem("curapath_mock_reminders");
     const list: Reminder[] = listStr ? JSON.parse(listStr) : [
       { id: "rem-1", medication: "Amoxicillin", dosage: "1g", frequency: "twice a day", reminder_times: ["08:00", "20:00"] },
       { id: "rem-2", medication: "Lithium (Téralithe 400)", dosage: "400mg", frequency: "once a day", reminder_times: ["21:00"] }
@@ -388,7 +422,7 @@ export async function createReminder(data: CreateReminderRequest): Promise<void>
       reminder_times: data.reminder_times
     };
     list.push(newRem);
-    localStorage.setItem("arwen_mock_reminders", JSON.stringify(list));
+    localStorage.setItem("curapath_mock_reminders", JSON.stringify(list));
     return;
   }
   const response = await fetch(buildUrl("/api/reminders/create"), {

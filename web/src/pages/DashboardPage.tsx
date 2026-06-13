@@ -9,9 +9,9 @@ import { TaskWidget } from "@/components/dashboard/TaskWidget";
 import { ReportsWidget } from "@/components/dashboard/ReportsWidget";
 import { QuickActionWidget } from "@/components/dashboard/QuickActionWidget";
 import { AICoachWidget } from "@/components/dashboard/AICoachWidget";
-import { getMedications, getPatientCard, getTimeline } from "@/api/client";
+import { getMedications, getPatientCard, getTimeline, getPatientHistory } from "@/api/client";
 import { useNotifications } from "@/contexts/NotificationContext";
-import type { PatientCard, MedicationSchedule, TimelineDay } from "@/types/models";
+import type { PatientCard, MedicationSchedule, TimelineDay, Consultation } from "@/types/models";
 
 export default function DashboardPage() {
   const { logout } = useAuth();
@@ -19,6 +19,7 @@ export default function DashboardPage() {
   const [schedules, setSchedules] = useState<MedicationSchedule[]>([]);
   const [adherenceScore, setAdherenceScore] = useState<number>(0);
   const [timeline, setTimeline] = useState<TimelineDay[] | null>(null);
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [loading, setLoading] = useState(true);
   
   const { unreadCount } = useNotifications();
@@ -26,15 +27,17 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const [cardData, medsData, timelineData] = await Promise.all([
+        const [cardData, medsData, timelineData, historyData] = await Promise.all([
           getPatientCard(),
           getMedications(),
           getTimeline(),
+          getPatientHistory(),
         ]);
         setCard(cardData);
         setSchedules(medsData.schedules);
         setAdherenceScore(medsData.adherence_score);
         setTimeline(timelineData);
+        setConsultations(historyData.consultations || []);
       } catch (err) {
         console.error("Failed to load dashboard data", err);
       } finally {
@@ -61,6 +64,12 @@ export default function DashboardPage() {
             </div>
           </div>
           
+          <nav className="hidden md:flex items-center gap-6 absolute left-1/2 -translate-x-1/2 text-sm font-medium">
+            <Link to="/" className="text-alan-indigo">Home</Link>
+            <Link to="/card" className="text-alan-text-muted hover:text-alan-indigo transition-colors">My Card</Link>
+            <Link to="/upload" className="text-alan-text-muted hover:text-alan-indigo transition-colors">Upload</Link>
+          </nav>
+
           <div className="flex items-center gap-3">
             <button onClick={logout} className="text-sm text-red-500 hover:underline">Log out</button>
             <Link
@@ -88,7 +97,7 @@ export default function DashboardPage() {
             <AppointmentWidget card={card} />
             <MedicationWidget schedules={schedules} />
             <TaskWidget timeline={timeline} />
-            <ReportsWidget />
+            <ReportsWidget consultations={consultations} />
             <QuickActionWidget />
           </div>
         )}

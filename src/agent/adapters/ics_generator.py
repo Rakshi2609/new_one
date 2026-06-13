@@ -50,7 +50,7 @@ def build_ics_for_action(action: Action) -> str | None:
     end_dt = start_dt + timedelta(hours=1)
     stamp = datetime.utcnow()
 
-    uid = f"{uuid.uuid4().hex}@arwen"
+    uid = f"{uuid.uuid4().hex}@curapath"
 
     summary = _escape(action.title)
     description_parts = [action.why]
@@ -61,7 +61,7 @@ def build_ics_for_action(action: Action) -> str | None:
     lines = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//Arwen//Agent//EN",
+        "PRODID:-//CuraPath//Agent//EN",
         "CALSCALE:GREGORIAN",
         "BEGIN:VEVENT",
         f"UID:{uid}",

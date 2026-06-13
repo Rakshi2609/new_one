@@ -242,7 +242,7 @@ class GeminiService:
 
     def ask_coach(self, chat_history: List[Dict[str, str]], patient_context: Dict[str, Any], query: str) -> str:
         prompt = (
-            f"You are Arwen's AI Recovery Coach. You help patients recover post-discharge.\n"
+            f"You are CuraPath's AI Recovery Coach. You help patients recover post-discharge.\n"
             f"Patient Context:\n{json.dumps(patient_context, indent=2)}\n\n"
             f"Conversation History:\n"
         )

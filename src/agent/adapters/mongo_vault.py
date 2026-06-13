@@ -37,7 +37,7 @@ class MongoEncryptedVault(PatientRepository):
         
         uri = mongo_uri or os.environ.get("MONGO_URI", "mongodb://localhost:27017")
         self._client = MongoClient(uri)
-        self._db = self._client["arwen"]
+        self._db = self._client["curapath"]
         self._collection = self._db["patients"]
 
     def _resolve_key(self) -> bytes:

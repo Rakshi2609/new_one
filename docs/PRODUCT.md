@@ -1,4 +1,4 @@
-# Arwen — The agent that turns your discharge instructions into actions
+# CuraPath — The agent that turns your discharge instructions into actions
 
 ## The problem
 
@@ -248,7 +248,7 @@ The next practitioner receives a **prepared** patient, not one who says "uh, I d
 
 **Act 2 — Follow-up (Pillar 2)**
 > We simulate D+2. The agent calls via voice:
-> "Hi John, this is your Arwen assistant. How are you feeling today? Any fever?"
+> "Hi John, this is your CuraPath assistant. How are you feeling today? Any fever?"
 > Patient responds → the agent reassures or escalates based on the answer.
 > "Don't forget, your urine culture is in 3 days."
 

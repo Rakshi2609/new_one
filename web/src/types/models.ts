@@ -221,3 +221,21 @@ export interface AuthResponse {
   token: string;
   user: User;
 }
+
+export interface Consultation {
+  id: string;
+  date: string;
+  practitioner: string | null;
+  documents: MedicalDocument[];
+  clinical_note: ClinicalNote | null;
+}
+
+export interface PatientHistory {
+  patient_id: string;
+  patient_card: PatientCard;
+  consultations: Consultation[];
+  action_plans: Record<string, unknown>[];
+  timeline: Record<string, unknown>[];
+  medication_schedules: MedicationSchedule[];
+  notifications: Notification[];
+}

@@ -20,14 +20,14 @@ from ..domain.models.vault import (
 
 logger = logging.getLogger(__name__)
 
-class ArwenDatabaseClient(PatientRepository):
+class CuraPathDatabaseClient(PatientRepository):
     def __init__(self, uri: Optional[str] = None) -> None:
         self.uri = uri or os.environ.get("MONGO_URI", "mongodb://localhost:27017")
         self.is_mock = False
         try:
             self.client = MongoClient(self.uri, serverSelectionTimeoutMS=1500)
             self.client.admin.command('ping')
-            self.db = self.client["arwen"]
+            self.db = self.client["curapath"]
             logger.info("Connected to MongoDB successfully.")
             self._setup_indices()
         except Exception as e:

@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, HTTPException, UploadFile, Depends
+from fastapi import FastAPI, File, HTTPException, UploadFile, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -15,7 +15,7 @@ from ..domain.models.auth import SignupRequest, LoginRequest, AuthResponse, User
 from ..app.auth_service import AuthService
 from ..adapters.auth_repository import AuthRepository
 
-from ..adapters.mongo_db import ArwenDatabaseClient
+from ..adapters.mongo_db import CuraPathDatabaseClient
 from ..adapters.gemini_service import GeminiService, IngestExtraction, RecoveryPlanResponse, ExtractedMedication
 from ..app.execution_service import ExecutionService
 from ..app.followup_service import FollowupService
@@ -98,15 +98,15 @@ def _suffix_for(upload: UploadFile) -> str:
 
 # --- Dependency wiring -----------------------------------------------------
 
-_repository: ArwenDatabaseClient | None = None
+_repository: CuraPathDatabaseClient | None = None
 _gemini_service: GeminiService | None = None
 _auth_repository: AuthRepository | None = None
 _auth_service: AuthService | None = None
 
-def get_db() -> ArwenDatabaseClient:
+def get_db() -> CuraPathDatabaseClient:
     global _repository
     if _repository is None:
-        _repository = ArwenDatabaseClient()
+        _repository = CuraPathDatabaseClient()
     return _repository
 
 def get_gemini_service() -> GeminiService:
@@ -118,7 +118,7 @@ def get_gemini_service() -> GeminiService:
 def get_auth_service() -> AuthService:
     global _auth_repository, _auth_service
     if _auth_repository is None:
-        # AuthRepository uses ArwenDatabaseClient inside
+        # AuthRepository uses CuraPathDatabaseClient inside
         _auth_repository = AuthRepository()
     if _auth_service is None:
         _auth_service = AuthService(_auth_repository)
@@ -137,10 +137,11 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     except ValueError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
-def get_patient_id(user: User = Depends(get_current_user), patient_id: str | None = None) -> str:
+def get_patient_id(request: Request, user: User = Depends(get_current_user)) -> str:
     if user.role == UserRole.PATIENT:
         return user.patient_id
     if user.role == UserRole.DOCTOR:
+        patient_id = request.query_params.get("patient_id")
         if not patient_id:
             raise HTTPException(status_code=400, detail="patient_id required for doctors")
         return patient_id
@@ -153,7 +154,7 @@ def get_doctor(user: User = Depends(get_current_user)) -> User:
 
 # --- App -------------------------------------------------------------------
 
-app = FastAPI(title="Arwen Agent API", version="0.3.0")
+app = FastAPI(title="CuraPath Agent API", version="0.3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -270,7 +271,7 @@ async def upload(
     file_paths = []
     transcript_text = None
 
-    with tempfile.TemporaryDirectory(prefix="arwen_upload_") as tmpdir:
+    with tempfile.TemporaryDirectory(prefix="curapath_upload_") as tmpdir:
         tmp_path = Path(tmpdir)
 
         for upload_file in files:
@@ -589,7 +590,7 @@ def skip_dose(schedule_id: str, dose_id: str, patient_id: str = Depends(get_pati
 @app.get("/api/patient/timeline", response_model=list[TimelineDay])
 def get_timeline(patient_id: str = Depends(get_patient_id)) -> list[TimelineDay]:
     service = TimelineService(get_db())
-    return service.get_patient_timeline(patient_id=patient_id)
+    return service.generate_timeline(patient_id)
 
 @app.get("/api/patient/notifications", response_model=list[Notification])
 def get_notifications(patient_id: str = Depends(get_patient_id)) -> list[Notification]:

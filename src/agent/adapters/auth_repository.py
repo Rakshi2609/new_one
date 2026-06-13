@@ -1,17 +1,17 @@
 import logging
 from typing import Optional
 from ..domain.models.auth import User
-from .mongo_db import ArwenDatabaseClient
+from .mongo_db import CuraPathDatabaseClient
 
 logger = logging.getLogger(__name__)
 
 class AuthRepository:
     """
-    Stores users in MongoDB via ArwenDatabaseClient.
+    Stores users in MongoDB via CuraPathDatabaseClient.
     """
 
     def __init__(self) -> None:
-        self._db = ArwenDatabaseClient()
+        self._db = CuraPathDatabaseClient()
 
     def get_user_by_email(self, email: str) -> Optional[User]:
         doc = self._db.get_user_by_email(email)

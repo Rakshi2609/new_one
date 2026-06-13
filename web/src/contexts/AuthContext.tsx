@@ -42,6 +42,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("active_patient_id");
+    localStorage.removeItem("curapath_mock_medications");
+    localStorage.removeItem("curapath_mock_appointments");
+    localStorage.removeItem("curapath_mock_reminders");
     setToken(null);
     setUser(null);
   };
