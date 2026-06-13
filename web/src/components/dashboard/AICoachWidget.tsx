@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Sparkles, Loader2, Target, AlertTriangle, MessageCircle, HeartPulse, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Sparkles, Loader2, Target, AlertTriangle, MessageCircle, HeartPulse, CheckCircle2, MessageSquare } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCoachSummary } from "@/api/client";
 import type { CoachSummary, PatientCard, TimelineDay } from "@/types/models";
@@ -37,11 +38,18 @@ export function AICoachWidget({ card, timeline }: AICoachWidgetProps) {
 
   return (
     <Card className="col-span-1 md:col-span-2 border-alan-indigo/30 shadow-md bg-gradient-to-br from-indigo-50 to-white">
-      <CardHeader className="pb-3 border-b border-alan-indigo/10">
+      <CardHeader className="pb-3 border-b border-alan-indigo/10 flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-base font-bold flex items-center gap-2 text-alan-indigo">
           <Sparkles className="h-5 w-5" />
           AI Recovery Coach
         </CardTitle>
+        <Link
+          to="/coach"
+          className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-alan-indigo text-white hover:bg-alan-indigo/90 transition-colors flex items-center gap-1.5 shadow-sm"
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          Chat with Coach
+        </Link>
       </CardHeader>
       <CardContent className="pt-4">
         {loading ? (

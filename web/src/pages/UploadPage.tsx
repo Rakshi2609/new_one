@@ -69,7 +69,7 @@ export default function UploadPage() {
             <Sparkles className="h-4 w-4 text-white" />
           </div>
           <div>
-            <span className="text-lg font-bold text-alan-text-primary">Arwen</span>
+            <span className="text-lg font-bold text-alan-text-primary">CuraPath</span>
             <span className="ml-2 text-sm text-alan-text-muted">par Alan</span>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function UploadPage() {
             <span className="text-alan-indigo">organised automatically</span>
           </h1>
           <p className="mt-3 text-base text-alan-text-muted max-w-md mx-auto">
-            Upload your medical documents. Arwen generates your action plan and detects critical interactions.
+            Upload your medical documents. CuraPath generates your action plan and detects critical interactions.
           </p>
         </div>
 

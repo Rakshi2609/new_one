@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['vite.svg'],
       manifest: {
-        name: 'Arwen',
-        short_name: 'Arwen',
-        description: 'Arwen Medical App',
+        name: 'CuraPath',
+        short_name: 'CuraPath',
+        description: 'CuraPath Medical App',
         theme_color: '#ffffff',
         icons: [
           {
