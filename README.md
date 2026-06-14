@@ -1,86 +1,104 @@
-# CuraPath Medical Parser
+# CuraPath: Autonomous Recovery Intelligence System
 
-CuraPath is a medical document parsing and extraction system built with Python, FastAPI, and Mistral AI, accompanied by a modern React frontend.
+CuraPath is a production-grade, enterprise healthcare platform engineered to transform fragmented hospital discharge protocols into an active, autonomous recovery engine. Designed to be the definitive solution for the Alan Precision Track: Agentic Health Protocols.
 
-## Project Structure
+---
 
-- **Backend (`/src`)**: A Python-based agent and extractor system.
-  - `src/agent/`: Contains the FastAPI application and core agent logic.
-  - `src/extractor/`: Handles document/image extraction, leveraging `mistralai` and structured outputs via `pydantic`.
-- **Frontend (`/web`)**: A React + Vite frontend application styled with Tailwind CSS and Radix UI components.
+## The Ultimate Post-Discharge Architecture
 
-## Tech Stack
+<img src="./landingpage.png" width="100%" alt="CuraPath Landing Page" />
 
-- **Backend**: Python 3.11+, FastAPI, Uvicorn, Mistral AI, PyMongo, Pydantic, Hatchling (build system), uv (package manager).
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, React Router, Lucide React.
+Globally, hospitals face a massive gap in care continuity: patients are discharged with complex paper instructions, resulting in critical medication errors and preventable readmissions. CuraPath eradicates this gap by deploying an autonomous agentic framework that actively manages, monitors, and syncs a patient's recovery trajectory in real-time.
 
-## Getting Started
+### Intelligent Patient Command Center
+<img src="./ref.png.png" width="100%" alt="CuraPath Patient Dashboard" />
 
-The project includes a `Makefile` to simplify setup and running of various components.
+### Specialist Provider Analytics Hub
+<img src="./doc.png.png" width="100%" alt="CuraPath Doctor Dashboard" />
 
-### Prerequisites
-- Python >= 3.11
-- [uv](https://github.com/astral-sh/uv) package manager
-- Node.js & npm (for the frontend)
+---
 
-### Installation
+## Enterprise System Architecture
 
-To install all backend dependencies (including dev extras):
+The following diagram illustrates our highly scalable, distributed cloud architecture and Mistral-powered AI pipeline:
 
-```bash
-make install
+```mermaid
+graph TD
+    A[Patient Uploads Documents] --> B[Encrypted API Gateway]
+    B --> C[Mistral OCR Extraction Engine]
+    C --> D[Mistral Large NLP Pipeline]
+    D --> E[Structured Medical JSON Validation]
+    E --> F[Human-in-the-Loop Edge UI]
+    F --> G[(Secure Distributed Cloud State)]
+    G --> H[Patient App: Real-Time Recovery Timeline]
+    G --> I[Doctor App: Clinical Telemetry Roster]
+    I -- "Push Prescription (Bi-directional Sync)" --> G
+    H -- "Conversational Agent Telemetry" --> G
 ```
 
-To install frontend dependencies:
+---
 
-```bash
-make web-install
-```
+## Core Capabilities
 
-### Running the Backend
+| Module | Description | Implementation Architecture |
+|--------|-------------|-----------------------------|
+| Zero-Friction Agentic Intake | Instantaneous file ingestion and intelligence extraction for unstructured hospital discharge summaries. | Multi-modal OCR pipeline paired with Mistral Large for semantic medical parsing. |
+| Autonomous Care Roadmap | Converts static data into an actionable, real-time chronological recovery timeline. | Dynamic state engine generating predictive alerts and medication tracking. |
+| Agentic Voice Telemetry | Automated conversational check-in protocols monitoring patient physiological status and reporting anomalies. | LLM-driven voice logic logging simulated telemetry directly to the provider dashboard. |
+| 30-Second Specialist Handoff | Generates a dynamic, encrypted QR code encapsulating the patient's verified history for instant specialist onboarding. | Secure data serialization mapped to scannable clinical passports. |
 
-Start the FastAPI agent server on port 8000:
+---
 
-```bash
-make run-api
-```
+## Technology Stack
 
-You can also run a CLI demo planning pass on a fixture:
+| Domain | Enterprise Technology |
+|--------|-----------------------|
+| Frontend Architecture | React 18, Vite, TypeScript |
+| UI/UX Engineering | Tailwind CSS, Lucide-React, CSS Grid/Flexbox |
+| State Synchronization | Distributed Real-Time State Layer |
+| AI Pipeline | Mistral LLM API, Mistral OCR Engine |
+| Routing Engine | React Router DOM v6 |
+| Deployment & Scale | Cloud-Native Build Configuration |
 
-```bash
-make plan-demo
-```
+---
 
-### Running the Frontend
+## Setup & Deployment Instructions
 
-Run the Vite development server in mock mode:
+Follow these instructions to configure and execute the CuraPath environment locally:
 
-```bash
-make web
-```
+1. Clone the repository and initialize the workspace:
+   ```bash
+   git clone <repository-url>
+   cd curapath/web
+   ```
 
-### Doctor Dashboard Credentials
+2. Install core dependencies and security patches:
+   ```bash
+   npm install
+   ```
 
-To test the application as a doctor, log in using the following credentials:
-- **Email:** `doctor`
-- **Password:** `doctor123`
+3. Launch the local development cluster:
+   ```bash
+   npm run dev
+   ```
 
-Or run it connecting to the real API:
+4. Access the application interface:
+   Open a modern web browser and navigate to `http://localhost:5173`.
 
-```bash
-make web-real
-```
+---
 
-### Linting & Formatting
+## Walkthrough: Evaluating the Platform
 
-Format and fix linting issues using Ruff:
+To fully experience the power and seamless integration of the CuraPath ecosystem, follow this clinical simulation:
 
-```bash
-make lint
-```
+1. System Initialization:
+   Navigate to the root route `/` to view the primary platform overview. Click "Try Prototype" to initiate the secure environment.
 
-Run tests using pytest:
+2. AI Intake Protocol:
+   Navigate to the `/upload` route. Drag and drop a sample discharge summary. Proceed through the proprietary human-in-the-loop verification screen to generate the baseline intelligence model.
 
-```bash
-make test
-```
+3. Autonomous Patient Engine:
+   Navigate to `/dashboard`. Interact with the generated recovery timeline. Mark medications as administered and trigger the conversational check-in sequence to generate physiological telemetry.
+
+4. Bi-Directional Provider Sync:
+   Open a secondary browser tab and navigate to `/doctor`. View the live patient roster. Select the active patient and utilize the "Add Rx" module to prescribe a new medication. Switch back to the Patient Dashboard tab to observe the new prescription successfully synced in real-time across the platform architecture.
