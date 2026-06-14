@@ -26,7 +26,7 @@ export default function LoginPage() {
       if (data.user.role === UserRole.DOCTOR) {
         navigate("/doctor");
       } else {
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (err: any) {
       setError(err.message);
