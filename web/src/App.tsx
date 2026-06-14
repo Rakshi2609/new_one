@@ -34,12 +34,12 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
-            <Route path="/landing" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
             {/* Protected patient routes */}
-            <Route path="/" element={<ProtectedRoute><HomeRoute /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><HomeRoute /></ProtectedRoute>} />
             <Route path="/doctor" element={<ProtectedRoute allowedRoles={[UserRole.DOCTOR]}><DoctorDashboardPage /></ProtectedRoute>} />
 
             <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
